@@ -1,0 +1,26 @@
+config:
+  target: 'http://localhost:3000'
+  phases:
+    - duration: 60
+      arrivalRate: 60
+  environments:
+    development:
+      target: 'https://your exposed uir'
+      phases:
+        - duration: 60
+          arrivalRate: 60
+    local:
+      target: 'http://localhost:3000'
+      phases:
+        - duration: 60
+          arrivalRate: 60
+  processor: "./testing.cjs"
+  defaults:
+    headers:
+      Authorization: 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyIsImtpZCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyJ9.eyJhdWQiOiJhcGk6Ly82MDU0YWFiYy1lZjM4LTQ2YmQtYmViYy1jZTY5OTE4NTk4YTgiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC9lNGQ4ZmVhYy1iNjM5LTRmZjQtYTg4Mi1mNWIxYjRhMTM3MjQvIiwiaWF0IjoxNjE4MjM5ODYzLCJuYmYiOjE2MTgyMzk4NjMsImV4cCI6MTYxODI0Mzc2MywiYWlvIjoiRTJaZ1lOQ1RlQjNiZnk3amZQYTZXM3VzNXpMT0F3QT0iLCJhcHBpZCI6IjY2OTE4NTY3LTNmN2UtNDI2Ny1hOGI0LTFmMTFlY2MxMmZlYiIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0L2U0ZDhmZWFjLWI2MzktNGZmNC1hODgyLWY1YjFiNGExMzcyNC8iLCJvaWQiOiJkMWI2M2ZkNC00YTk2LTRkZWItYTNkYi1hMzBkMmNkOWYyZWQiLCJyaCI6IjAuQVRjQXJQN1k1RG0yOUUtb2d2V3h0S0UzSkdlRmtXWi1QMmRDcUxRZkVlekJMLXMzQUFBLiIsInN1YiI6ImQxYjYzZmQ0LTRhOTYtNGRlYi1hM2RiLWEzMGQyY2Q5ZjJlZCIsInRpZCI6ImU0ZDhmZWFjLWI2MzktNGZmNC1hODgyLWY1YjFiNGExMzcyNCIsInV0aSI6Iko0LUdfbVI5aTAtMm95bEZzdE54QUEiLCJ2ZXIiOiIxLjAifQ.FIoE9iqLDtk20bKst9F4hk_HaN88vKfdwExCKcZBG5u2H6q-bM4DqbMtwSdK87QORLmKV4kMRmNuLCSaBj8SgroZSCalQWIwTbkyzJaAJBaxhwk-ncYkIxxLRpY2NiEdDjqBBIn4wAslVku2HaSKwxayrNBMzzrNE6JoFMvysPposSMCB3XPGi5obUl7_2q-fdhDYb4oIWm8SJ_9dxHyvVqOZT0BC6c_GXCv3FHxZDSpFKoWNLaX0Vf7jE7oHPu-j_wqUnoPUvc0WjdXBnYpM_vkpz_oNa6dzLBWuhRhpIyzb9F4ifNQPlyn0aHC-vB96v44eiIx7fQhFC3_er_C5g'
+scenarios:
+  - flow:
+    - get:
+        beforeRequest: "beforeRequestHandler"
+        url: "/api/v1/tenants?page={{page}}per_page=100"
+        #url: "/api/v1/tenants"

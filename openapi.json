@@ -1,0 +1,348 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "version": "0.1.0",
+    "title": "tenant-management-api",
+    "description": "An api to allow management of Tenants within Florence Healthcare. This features basic CRUD operations for Tenants.",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://localhost:3000",
+      "description": "local development",
+      "variables": {
+        "protocol": {
+          "enum": [
+            "http"
+          ],
+          "default": "http"
+        }
+      }
+    }
+  ],
+  "tags": [
+    {
+      "name": "Tenant Management",
+      "description": "API for Tenant Management"
+    }
+  ],
+  "paths": {
+    "/api/v1/tenants": {
+      "post": {
+        "tags": [
+          "Tenants"
+        ],
+        "summary": "Creates new tenant in the tenant-management-api system",
+        "description": "This provides the ability to create a new tenent",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/TenantPostRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "This response includes the referenceId whis is the consumers unique identifier, the order id which is can be used in instance requests and the creation date time",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantPostResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "This is identified as a request that is malformed. This is typically a malformed payload.",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "401": {
+            "description": "Authorization information is missing or invalid."
+          },
+          "409": {
+            "description": "This is identified as a request already received by the system",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Tenants"
+        ],
+        "summary": "This gives the consumer the ability to get a collection of tenants from the system",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "The zero based page number of the collection of orders in your request. If a page goes beyond the collection size, No records will be returned.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "per_page",
+            "description": "The number of orders to view in the response with a maximum of 200. If a number above 200 is used only 200 will be used in the response",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "filter",
+            "description": "a customizable filter that can be applied to your collection",
+            "example": "filter={'id':'ABC123'}",
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Collection of Tenants",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantGetAggregationResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization information is missing or invalid."
+          }
+        }
+      }
+    },
+    "/api/v1/tenants/{tenant_id}": {
+      "parameters": [
+        {
+          "name": "tenant_id",
+          "in": "path",
+          "required": true,
+          "description": "ID of tenant that we want to query",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "Tenants"
+        ],
+        "summary": "Gets and existing tenant details based on a given tenant id",
+        "responses": {
+          "200": {
+            "description": "The Tenent Detail",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantGetInstanceResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization information is missing or invalid."
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Tenants"
+        ],
+        "summary": "Updates an existing tenant details based on a given tenant id",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TenantPatchDeleteRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Updated Tenent Detail",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantGetInstanceResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization information is missing or invalid."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Tenants"
+        ],
+        "summary": "Soft Deletes an existing tenant based on a given tenant id",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TenantPatchDeleteRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Updated Tenent Detail",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantGetInstanceResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization information is missing or invalid."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "TenantPostRequest": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "uniqueItems": true,
+            "description": "A user friendly unique identifier to identify the tenant"
+          },
+          "name": {
+            "type": "string",
+            "uniqueItems": true,
+            "description": "The name of the tenant"
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed description of the tenant"
+          },
+          "website": {
+            "type": "string",
+            "description": "A website uri associated ot the tenant"
+          },
+          "status": {
+            "type": "string",
+            "description": "Provides a status associated to the tenant",
+            "enum": [
+              "new",
+              "active",
+              "retired"
+            ]
+          }
+        }
+      },
+      "TenantPostResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "timestamps": {
+            "deleted": { 
+              "type": "date"
+            },
+            "created": {
+              "type": "date"
+            },
+            "updated": {
+              "type":"date"
+            }
+          }
+        }
+      },
+      "TenantGetInstanceResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "timestamps": {
+            "deleted": { 
+              "type": "date"
+            },
+            "created": {
+              "type": "date"
+            },
+            "updated": {
+              "type":"date"
+            }
+          }
+        }
+      },
+      "TenantGetAggregationResponse": {
+        "type": "array",
+        "items": {
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "code": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "TenantPatchDeleteRequest": {
+        "type": "object",
+        "required": [
+          "nonce"
+        ],
+        "properties": {
+          "nonce": {
+            "type": "string",
+            "uniqueItems": true,
+            "description": "Used to prevent concurrency collisions. This a timestamped value must be the latest for each update or delete that can be used to update the system. Having a payload in the DELETE verb breaks the open-api 3 spec but in this case serves as an update since it is a soft delete"
+          }
+        }
+      }
+    }
+  }
+}

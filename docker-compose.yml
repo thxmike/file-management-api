@@ -1,0 +1,33 @@
+# https://docs.microsoft.com/en-us/dotnet/architecture/microservices/multi-container-microservice-net-applications/multi-container-applications-docker-compose
+version: "3.9"
+services:
+  api:
+    build: .
+    ports:
+      - "3000:3000"
+    environment: 
+      - AZURE_KEY_STORE_URI
+      - AZURE_CLIENT_ID
+      - AZURE_CLIENT_SECRET
+      - AZURE_TENANT_ID
+      - PORT
+    depends_on: 
+      - cache-service
+    networks:
+      - frontend
+      - backend
+      
+  cache-service:
+    image: redis:alpine
+    expose: 
+      - 6379
+    hostname: redis-cache
+    ports: 
+      - "6379:6379"
+    networks:
+      - backend
+
+networks:
+  frontend:
+  backend:
+    internal: true

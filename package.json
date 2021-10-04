@@ -1,0 +1,54 @@
+{
+  "name": "file-management-api",
+  "version": "0.1.0",
+  "description": "Provides a RESTful api for File Management",
+  "license": "ISC",
+  "author": "Michael Rivera",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node bin/server.js",
+    "build": "npm i && tsc",
+    "lint": "eslint --ignore-path .gitignore . --fix",
+    "test": "echo \"Error: currently no test specified\""
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "@thxmike/configuration": "^0.2.10",
+    "@thxmike/console-debug": "0.0.4",
+    "@thxmike/express-app-controller": "^0.1.22",
+    "@thxmike/express-common-controller": "^0.1.20",
+    "@thxmike/express-identity-jwt-token-login": "0.1.14",
+    "@thxmike/express-root-controller": "0.0.10",
+    "@thxmike/express-route-logger": "0.0.5",
+    "@thxmike/file-system": "^0.1.8",
+    "@thxmike/http-server": "0.0.10",
+    "@thxmike/json-message": "0.0.4",
+    "@thxmike/mongoose-base-director": "^0.1.12",
+    "@thxmike/mongoose-base-schema": "0.1.30",
+    "@thxmike/mongoose-common-model-manager": "0.0.14",
+    "@thxmike/mongoose-custom": "^0.1.46",
+    "@thxmike/mongoose-setup": "^0.1.89",
+    "@thxmike/redis-client": "0.1.3",
+    "@thxmike/rest-client": "0.1.22",
+    "@thxmike/string-operations": "0.1.5",
+    "@thxmike/type-conversion": "0.1.5",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "reflect-metadata": "^0.1.13",
+    "syswide-cas": "^5.3.0",
+    "typescript": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^8.5.5",
+    "@types/node": "^16.10.2"
+  },
+  "bin": {
+    "file-management-api": "configuration.js"
+  },
+  "directories": {
+    "test": "test"
+  }
+}

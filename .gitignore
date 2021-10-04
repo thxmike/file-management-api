@@ -1,0 +1,4 @@
+node_modules
+.vscode
+cors_test.js
+bin

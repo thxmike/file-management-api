@@ -1,0 +1,9 @@
+# Have to prebuild node modules and make part of the image since the azure hosts are missing python for building.
+node_modules
+Dockerfile
+.dockerignore
+.vscode
+.temp
+.git
+.gitignore
+.env
