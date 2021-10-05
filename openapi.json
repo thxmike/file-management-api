@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "version": "0.1.0",
-    "title": "tenant-management-api",
-    "description": "An api to allow management of Tenants within Florence Healthcare. This features basic CRUD operations for Tenants.",
+    "title": "file-management-api",
+    "description": "An api to allow management of files within Florence Healthcare for multiple files. This API supports Uploading, Downloading, Get a list of files and get file metadata operations for Files",
     "license": {
       "name": "MIT",
       "url": "https://opensource.org/licenses/MIT"
@@ -25,23 +25,71 @@
   ],
   "tags": [
     {
-      "name": "Tenant Management",
-      "description": "API for Tenant Management"
+      "name": "File Management",
+      "description": "API for File Management"
     }
   ],
   "paths": {
-    "/api/v1/tenants": {
+    "/api/v1/files": {
+      "get": {
+        "tags": [
+          "Files"
+        ],
+        "summary": "This gives the consumer the ability to get a collection of file ids from the system",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "The zero based page number of the collection of orders in your request. If a page goes beyond the collection size, No records will be returned.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "per_page",
+            "description": "The number of files to view in the response with a maximum of 200. If a number above 200 is used only 200 will be used in the response",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "filter",
+            "description": "a customizable filter that can be applied to your collection",
+            "example": "filter={'id':'ABC123'}",
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Collection of Files",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileGetAggregationResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization information is missing or invalid."
+          }
+        }
+      },
       "post": {
         "tags": [
-          "Tenants"
+          "Files"
         ],
-        "summary": "Creates new tenant in the tenant-management-api system",
-        "description": "This provides the ability to create a new tenent",
+        "summary": "Uploads a new file in the file-management-api system",
+        "description": "This provides the ability to upload a new file",
         "requestBody": {
           "content": {
             "application/x-www-form-urlencoded": {
               "schema": {
-                "$ref": "#/components/schemas/TenantPostRequest"
+                "$ref": "#/components/schemas/FilePostRequest"
               }
             }
           }
@@ -52,7 +100,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TenantPostResponse"
+                  "$ref": "#/components/schemas/FilePostResponse"
                 }
               }
             }
@@ -73,63 +121,15 @@
             }
           }
         }
-      },
-      "get": {
-        "tags": [
-          "Tenants"
-        ],
-        "summary": "This gives the consumer the ability to get a collection of tenants from the system",
-        "parameters": [
-          {
-            "in": "query",
-            "name": "page",
-            "description": "The zero based page number of the collection of orders in your request. If a page goes beyond the collection size, No records will be returned.",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "in": "query",
-            "name": "per_page",
-            "description": "The number of orders to view in the response with a maximum of 200. If a number above 200 is used only 200 will be used in the response",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "in": "query",
-            "name": "filter",
-            "description": "a customizable filter that can be applied to your collection",
-            "example": "filter={'id':'ABC123'}",
-            "schema": {
-              "type": "object"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Collection of Tenants",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TenantGetAggregationResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Authorization information is missing or invalid."
-          }
-        }
       }
     },
-    "/api/v1/tenants/{tenant_id}": {
+    "/api/v1/files/{file_id}": {
       "parameters": [
         {
-          "name": "tenant_id",
+          "name": "file_id",
           "in": "path",
           "required": true,
-          "description": "ID of tenant that we want to query",
+          "description": "ID of file that we want to query",
           "schema": {
             "type": "string"
           }
@@ -137,16 +137,16 @@
       ],
       "get": {
         "tags": [
-          "Tenants"
+          "Files"
         ],
-        "summary": "Gets and existing tenant details based on a given tenant id",
+        "summary": "Gets file metadata based on a given file id",
         "responses": {
           "200": {
-            "description": "The Tenent Detail",
+            "description": "The File Metadata",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TenantGetInstanceResponse"
+                  "$ref": "#/components/schemas/FileGetInstanceResponse"
                 }
               }
             }
@@ -156,27 +156,19 @@
           }
         }
       },
-      "patch": {
+      "post": {
         "tags": [
-          "Tenants"
+          "Files"
         ],
-        "summary": "Updates an existing tenant details based on a given tenant id",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TenantPatchDeleteRequest"
-              }
-            }
-          }
-        },
+        "summary": "Gets file binary data based on a given file id",
         "responses": {
           "200": {
-            "description": "The Updated Tenent Detail",
+            "description": "The File Binary Data",
             "content": {
-              "application/json": {
+              "formData": {
                 "schema": {
-                  "$ref": "#/components/schemas/TenantGetInstanceResponse"
+                  "type": "string",
+                  "format": "binary"
                 }
               }
             }
@@ -188,25 +180,30 @@
       },
       "delete": {
         "tags": [
-          "Tenants"
+          "Files"
         ],
-        "summary": "Soft Deletes an existing tenant based on a given tenant id",
+        "summary": "Deletes a file based on a given file id. Returns the modified metadata with a deleted timestamp",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/TenantPatchDeleteRequest"
+                "type": "object",
+                "properties": {
+                  "nonce": {
+                    "type": "string"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "The Updated Tenent Detail",
+            "description": "The File Metadata Data",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TenantGetInstanceResponse"
+                  "$ref": "#/components/schemas/FileGetInstanceResponse"
                 }
               }
             }
@@ -220,126 +217,131 @@
   },
   "components": {
     "schemas": {
-      "TenantPostRequest": {
+      "FilePostRequest": {
         "type": "object",
         "properties": {
-          "code": {
+          "file": {
             "type": "string",
-            "uniqueItems": true,
-            "description": "A user friendly unique identifier to identify the tenant"
-          },
-          "name": {
-            "type": "string",
-            "uniqueItems": true,
-            "description": "The name of the tenant"
-          },
-          "description": {
-            "type": "string",
-            "description": "Detailed description of the tenant"
-          },
-          "website": {
-            "type": "string",
-            "description": "A website uri associated ot the tenant"
-          },
-          "status": {
-            "type": "string",
-            "description": "Provides a status associated to the tenant",
-            "enum": [
-              "new",
-              "active",
-              "retired"
-            ]
+            "description": "This is file path of the local file system to upload"
           }
         }
       },
-      "TenantPostResponse": {
+      "FilePostResponse": {
         "type": "object",
         "properties": {
           "id": {
-            "type": "string"
-          },
-          "code": {
-            "type": "string"
+            "type": "string",
+            "description": "a unique identifier associated to the file"
           },
           "name": {
-            "type": "string"
+            "type": "string",
+            "description": "This is file metadata and will serve as the new file name stored in the system"
           },
           "description": {
-            "type": "string"
+            "type": "string",
+            "description": "this is file metadata and will describe when the file was uploaded."
           },
-          "status": {
-            "type": "string"
+          "size": {
+            "type": "number",
+            "description": "this is file metadata and will provide the fiile size in bytes"
+          },
+          "file_id": {
+            "type": "string",
+            "description": "this is the file id generated by the underlying file system (GridFS, Cloud Bucket, Local File path)"
+          },
+          "file_name": {
+            "type": "string",
+            "description": "the original filename when the file was uploaded"
+          },
+          "context_id": {
+            "type": "string",
+            "description": "the external identifier used for segregating/organizing the files."
+          },
+          "path": {
+            "type": "string",
+            "description": "this is file metadat and serves as a virtual file folder and can be used for organization."
+          },
+          "nonce": {
+            "type": "string",
+            "description": "used for client side concurrency"
           },
           "timestamps": {
-            "deleted": { 
-              "type": "date"
-            },
-            "created": {
-              "type": "date"
-            },
-            "updated": {
-              "type":"date"
-            }
+            "$ref": "#/components/schemas/Timestamps"
           }
         }
       },
-      "TenantGetInstanceResponse": {
+      "FileGetInstanceResponse": {
         "type": "object",
         "properties": {
           "id": {
-            "type": "string"
-          },
-          "code": {
-            "type": "string"
+            "type": "string",
+            "description": "a unique identifier associated to the file"
           },
           "name": {
-            "type": "string"
+            "type": "string",
+            "description": "This is file metadata and will serve as the new file name stored in the system"
           },
           "description": {
-            "type": "string"
+            "type": "string",
+            "description": "this is file metadata and will describe when the file was uploaded."
           },
-          "status": {
-            "type": "string"
+          "size": {
+            "type": "number",
+            "description": "this is file metadata and will provide the fiile size in bytes"
+          },
+          "file_id": {
+            "type": "string",
+            "description": "this is the file id generated by the underlying file system (GridFS, Cloud Bucket, Local File path)"
+          },
+          "file_name": {
+            "type": "string",
+            "description": "the original filename when the file was uploaded"
+          },
+          "context_id": {
+            "type": "string",
+            "description": "the external identifier used for segregating/organizing the files."
+          },
+          "path": {
+            "type": "string",
+            "description": "this is file metadat and serves as a virtual file folder and can be used for organization."
+          },
+          "nonce": {
+            "type": "string",
+            "description": "used for client side concurrency"
           },
           "timestamps": {
-            "deleted": { 
-              "type": "date"
-            },
-            "created": {
-              "type": "date"
-            },
-            "updated": {
-              "type":"date"
-            }
+            "$ref": "#/components/schemas/Timestamps"
           }
         }
       },
-      "TenantGetAggregationResponse": {
+      "FileGetAggregationResponse": {
         "type": "array",
         "items": {
           "properties": {
             "id": {
-              "type": "string"
+              "type": "string",
+              "description": "a unique identifier associated to the file"
             },
             "name": {
-              "type": "string"
-            },
-            "code": {
-              "type": "string"
+              "type": "string",
+              "description": "This is file metadata and will serve as the new file name stored in the system"
             }
           }
         }
       },
-      "TenantPatchDeleteRequest": {
+      "Timestamps": {
         "type": "object",
-        "required": [
-          "nonce"
-        ],
-        "properties": {
-          "nonce": {
-            "type": "string",
-            "uniqueItems": true,
-            "description": "Used to prevent concurrency collisions. This a timestamped value must be the latest for each update or delete that can be used to update the system. Having a payload in the DELETE verb breaks the open-api 3 spec but in this case serves as an update since it is a soft delete"
+        "items": {
+          "properties": {
+            "deleted": {
+              "type": "string"
+            },
+            "created": {
+              "type": "string"
+            },
+            "updated": {
+              "type": "string"
+            }
           }
         }
       }

@@ -6,11 +6,19 @@ export class FileSchema extends MongooseBaseSchema {
         super(obj, options, my_mongoose);
     
         let additional_schema = {
-          "original_file_name": {
+          "size": {
+            "type": Number,
+            "required": true
+          },
+          "path": {
             "type": String,
             "required": true
           },
-          "original_file_id":{
+          "file_name": {
+            "type": String,
+            "required": true
+          },
+          "file_id":{
             "type": my_mongoose.Schema.Types.ObjectId,
           },
         };

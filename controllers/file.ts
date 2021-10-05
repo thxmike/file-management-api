@@ -32,8 +32,9 @@ export class FileController extends CommonController {
     // fail the entire transaction
     let payload: any = {
       name: req.file.filename,
-      original_file_id: req.file.id.toString(),
-      original_file_name: req.file.originalname,
+      file_id: req.file.id.toString(),
+      file_name: req.file.originalname,
+      size: req.file.size,
       description: `${req.file.originalname} uploaded on ${req.file.uploadDate} with a size of ${req.file.size}`,
       path: req.query.path || "/",
 
