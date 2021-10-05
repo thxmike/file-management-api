@@ -1,6 +1,6 @@
 export default {
     "site": {
-        "port": "3000",
+        "port": "3001",
         "whitelist": [
             "https://*.somedomain.com"
         ],
