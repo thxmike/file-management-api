@@ -22,7 +22,7 @@ export default {
         "client-secret": "*"
     },
     "mongo": {
-        "uri": "mongodb://localhost:27017/tenant-management",
+        "uri": "mongodb://localhost:27017/file-management",
         "database": "*",
         "username": "",
         "pw": "",

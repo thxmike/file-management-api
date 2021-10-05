@@ -1,7 +1,10 @@
 import { CommonController } from "@thxmike/express-common-controller";
-import * as mongoose from "mongoose";
+import mongoose from "mongoose";
 
-class FileController extends CommonController {
+
+//TODO: Move Mongoose references and common functionality to common or base controller 
+export class FileController extends CommonController {
+  //Override
   setup_aggregate_routes() {
     this._router
       .route(this.aggregate_route)
@@ -13,13 +16,23 @@ class FileController extends CommonController {
       );
   }
 
+  // @Override
+  setup_instance_routes() {
+    this._router
+      .route(this.instance_route)
+      .get(this.get_instance_request.bind(this))
+      .post(this.post_instance_request.bind(this))
+      .delete(this.delete_instance_request.bind(this));
+  }
+
   post_aggregate_request(req: any, res: any) {
+    let filter = this.setup_filter(req.headers, req.query);
     //TODO: Need to figure out a way to make writes to file and
     // user file meta data run at the same time and if either fail,
     // fail the entire transaction
-    let payload = {
+    let payload: any = {
       name: req.file.filename,
-      original_file_id: req.file.id,
+      original_file_id: req.file.id.toString(),
       original_file_name: req.file.originalname,
       description: `${req.file.originalname} uploaded on ${req.file.uploadDate} with a size of ${req.file.size}`,
       path: req.query.path || "/",
@@ -28,16 +41,17 @@ class FileController extends CommonController {
       user_id: "000000000000000000000000",
     };
 
-    //Attach a User to the file.
-    if (this.has_parent) {
-      let parts = req.baseUrl.split("/");
-      payload.user_id = parts[parts.length - 1];
+    if(req.headers.context_id){
+      payload.context_id = req.headers.context_id
     }
 
     this.data_service.file_model_manager
-      .post_operation(payload)
+      .post_operation(payload, filter)
       .then((response: any) => {
         res.status(response.status).json(response.message);
+      })
+      .catch((err: any) => {
+        res.status(400).json(err);
       });
   }
 
@@ -88,43 +102,6 @@ class FileController extends CommonController {
         })
         //Filter and seperate Folders and Files
         .then((response: any) => {
-          let updated_messages: any[] = [];
-          if (path) {
-            const files = response.message.filter((file: any) =>
-              file.path.startsWith(path)
-            );
-            files.forEach((fileorfold: any) => {
-              //fileorfold.toJSON
-              let type: any = null;
-              if (fileorfold.path === path) {
-                type = "file";
-              } else {
-                type = "folder";
-
-                delete fileorfold.name;
-                delete fileorfold.original_file_name;
-                delete fileorfold.description;
-              }
-
-              if (
-                updated_messages.find(
-                  (item) =>
-                    item.type === "folder" &&
-                    type === "folder" &&
-                    item.path === fileorfold.path
-                )
-              ) {
-                //skip: I already have this folder in the collection
-              } else {
-                let merged_data = { ...fileorfold, ...{ type: type } };
-                updated_messages.push(merged_data);
-              }
-            });
-            response.message = updated_messages;
-          }
-          return response;
-        })
-        .then((response: any) => {
           res.header("count", count);
           this._setup_header(args, res, response);
           res.status(response.status).json(response.message);
@@ -162,25 +139,6 @@ class FileController extends CommonController {
       });
   }
 
-  // @Override
-  patch_instance_request(req: any, res: any) {
-    let id = req.params[`${this.alternate_name}_id`];
-
-    this.data_service.file_model_manager
-      .patch_operation(id, req.body)
-      .then((response: any) => {
-        res.status(response.status).json(response.message);
-      })
-      .catch((err: any) => {
-        return this._send_error(
-          res,
-          req,
-          err,
-          this.constructor.name,
-          "patch_instance_request"
-        );
-      });
-  }
 
   //@Override
   delete_instance_request(req: any, res: any) {
@@ -195,7 +153,7 @@ class FileController extends CommonController {
       let item = { [parent_id]: objectid };
 
       if (mongoose.isValidObjectId(objectid)) {
-        objectid = mongoose.Types.ObjectId(objectid);
+        objectid = this.data_service.mongoose.Types.ObjectId(objectid);
         item = { [parent_id]: objectid };
       }
 
@@ -209,13 +167,13 @@ class FileController extends CommonController {
     let args = CommonController.parse_query_string_to_args(req);
 
     if (id !== "0") {
-      this.delete_item(id, filter.file_id, req, res);
+      this.delete_item(id, req, res);
     } else {
       return this.data_service.file_model_manager
         .get_aggregate_operation(...args)
         .then((response: any) => {
           response.message.forEach((record: any) => {
-            this.delete_item(record.original_file_id, record._id, req, res);
+            this.delete_item(record.original_file_id, req, res);
           });
         })
         .then(() => {
@@ -227,49 +185,60 @@ class FileController extends CommonController {
     }
   }
 
-  delete_item(original_file_id: any, file_id: any, req: any, res: any) {
-    this.data_service.gfs.delete(
-      new mongoose.Types.ObjectId(original_file_id),
-      (err: any) => {
-        if (err) {
-          //return res.status(404).json({ err: err });
-          //continue to delete the db
-        }
-        return this.data_service.file_model_manager
-          .delete_operation(
-            new mongoose.Types.ObjectId(file_id),
-            req.body,
-            false
-          )
-          .then((response: any) => {
-            res.status(200).send(response);
-          })
-          .catch((err: any) => {
-            return this._send_error(
-              res,
-              req,
-              err,
-              this.constructor.name,
-              "delete_instance_request"
-            );
+  delete_item(id: any,  req: any, res: any) {
+
+    this.data_service.file_model_manager.get_instance_operation_by_id(id)
+      .then((response: any) => {
+        return this.data_service.gfs.delete(
+          response.message.original_file_id.toString(),
+          (err: any) => {
+            if (err) {
+              res.status(400).json({ err: err.message });
+              return
+              //continue to delete the db
+            }
+            return this.data_service.file_model_manager
+              .delete_operation(
+                id,
+                req.body,
+                false
+              )
+              .then((response: any) => {
+                res.status(200).send(response);
+              })
+              .catch((err: any) => {
+                return this._send_error(
+                  res,
+                  req,
+                  err,
+                  this.constructor.name,
+                  "delete_instance_request"
+                );
+              });
           });
-      }
-    );
+      });
   }
 
   post_instance_request(req: any, res: any) {
-    this.data_service.gfs
-      .find({ filename: req.params.file_id })
-      .toArray((err: any, files: any) => {
-        if (!files || files.length === 0) {
-          return res.status(404).json({
-            err: "no files exist",
-          });
-        }
-        this.data_service.gfs
-          .openDownloadStreamByName(req.params.file_id)
-          .pipe(res);
-      });
+    this.data_service.file_model_manager.get_instance_operation_by_id(req.params.file_id)
+      .then((response: any) => {
+        return this.data_service.gfs
+        .find({ filename: response.message.name })
+        .toArray((err: any, files: any) => {
+          if (!files || files.length === 0) {
+            return res.status(404).json({
+              err: "no files exist",
+            });
+          }
+          this.data_service.gfs
+            .openDownloadStreamByName(response.message.name)
+            .pipe(res);
+        });
+      })
+      .catch((err: any) => {
+        res.status(404).send(err);
+      })
+
   }
 
   _check_filter(req: any) {
@@ -285,15 +254,4 @@ class FileController extends CommonController {
     return filter;
   }
 
-  //Get and Update a User
-  // @Override
-  setup_instance_routes() {
-    this._router
-      .route(this.instance_route)
-      .get(this.get_instance_request.bind(this))
-      .patch(this.patch_instance_request.bind(this))
-      .post(this.post_instance_request.bind(this))
-      .delete(this.delete_instance_request.bind(this));
-  }
 }
-module.exports = FileController;

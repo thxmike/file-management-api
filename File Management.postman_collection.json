@@ -1,0 +1,211 @@
+{
+	"info": {
+		"_postman_id": "495da42b-71c8-4f33-86b2-2656d1c54300",
+		"name": "File Management",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Files",
+			"item": [
+				{
+					"name": "Upload File",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "context_id",
+								"value": "00000000-615b-30a4-41f0-4f66d4e2564f",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Temp/SSISPowerPackSetup_64bit_Trial.msi"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{uri}}/api/v1/files",
+							"host": [
+								"{{uri}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"files"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Files",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "context_id",
+								"value": "00000000-615b-30a4-41f0-4f66d4e2564f",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{uri}}/api/v1/files",
+							"host": [
+								"{{uri}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"files"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET File",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "context_id",
+								"value": "00000000-615b-30a4-41f0-4f66d4e2564f",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{uri}}/api/v1/files/00000000-615b-85fc-fb32-e935bcd054ae",
+							"host": [
+								"{{uri}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"files",
+								"00000000-615b-85fc-fb32-e935bcd054ae"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Physical File",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "context_id",
+								"value": "00000000-615b-30a4-41f0-4f66d4e2564f",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{uri}}/api/v1/files/00000000-615b-85fc-fb32-e935bcd054ae",
+							"host": [
+								"{{uri}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"files",
+								"00000000-615b-85fc-fb32-e935bcd054ae"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE File",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "context_id",
+								"value": "00000000-615b-30a4-41f0-4f66d4e2564f",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{uri}}/api/v1/files/00000000-615b-85fc-fb32-e935bcd054ae",
+							"host": [
+								"{{uri}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"files",
+								"00000000-615b-85fc-fb32-e935bcd054ae"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "List",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{uri}}/list",
+					"host": [
+						"{{uri}}"
+					],
+					"path": [
+						"list"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Health",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{uri}}/health",
+					"host": [
+						"{{uri}}"
+					],
+					"path": [
+						"health"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

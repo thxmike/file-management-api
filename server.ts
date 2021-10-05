@@ -13,7 +13,7 @@ import express from 'express';
 import util from 'util';
 
 import configuration_object from './configuration.js';
-import { TenantController } from './controllers/tenant.js';
+import { FileController } from './controllers/file.js';
 import { Director } from './models/index.js';
 
 let app_directory = './';
@@ -86,7 +86,6 @@ let start = () => {
     }`
   );
 
-  
   console.debug(
     `Using the following Identity Server: ${configuration_service.configuration.identity.iss}`
   );
@@ -133,33 +132,39 @@ let start = () => {
     configuration_service.configuration.mongo.debug,
     configuration_service.configuration.mongo.username,
     configuration_service.configuration.mongo.password
-  );
+  )
   
   console.debug(`Connecting To Mongo Database Server: ${configuration_service.configuration.mongo.uri}`);
-  
+  return mongo_setup_service.connect()
+    .then(() => {
+    
     return http_server_service.start().then(() => {
-      console.debug("Setting up Route Controllers");
+      console.debug("Setting up RootControllers");
 
       setup_root_controller();
 
       //Setup Routes on Application
-      const tenant_controller = new TenantController(
-        "tenant",
+      const file_controller = new FileController(
+        "file",
         app,
         express.Router(),
         application_root,
         version,
-        mongo_setup_service.director.tenant_model_manager,
+        { 
+          file_model_manager: mongo_setup_service.director.file_model_manager,
+          upload: mongo_setup_service.multi_part_uploader,
+          gfs: mongo_setup_service.grid_fs_bucket
+        },
         message_service,
         [express_identity_token_login_service.authenticate.bind(express_identity_token_login_service),
          ]
       );
       
-      console.debug(`Setting Up ${tenant_controller.constructor.name}`);
+      console.debug(`Setting Up ${file_controller.constructor.name}`);
 
     });
-  
-};
+  })
+}
 
 /* TODO: Connect to Vault and apply overrides on application startup
 console.log(`Connecting to Vault and overriding configuration: 
