@@ -222,7 +222,7 @@
         "properties": {
           "file": {
             "type": "string",
-            "description": "This is file path of the local file system to upload"
+            "description": "The binary data of the file to upload"
           }
         }
       },
