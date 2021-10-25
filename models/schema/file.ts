@@ -10,6 +10,10 @@ export class FileSchema extends MongooseBaseSchema {
             "type": Number,
             "required": true
           },
+          "context_id": {
+            "type": String,
+            "required": true
+          },
           "path": {
             "type": String,
             "required": true

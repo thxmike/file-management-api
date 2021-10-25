@@ -27,7 +27,7 @@ export class FileController extends CommonController {
 
   post_aggregate_request(req: any, res: any) {
     let filter = this.setup_filter(req.headers, req.query);
-    //TODO: Need to figure out a way to make writes to file and
+    // TODO: Need to figure out a way to make writes to file and
     // user file meta data run at the same time and if either fail,
     // fail the entire transaction
     let payload: any = {
