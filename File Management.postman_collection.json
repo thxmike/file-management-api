@@ -30,7 +30,7 @@
 								{
 									"key": "file",
 									"type": "file",
-									"src": "/C:/Temp/SSISPowerPackSetup_64bit_Trial.msi"
+									"src": "/C:/Users/mrivera.BIOTECH/Projects/GD.Reporting.API/setup_certificate.js"
 								}
 							]
 						},
@@ -65,7 +65,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{uri}}/api/v1/files",
+							"raw": "{{uri}}/api/v1/files?path='/test'",
 							"host": [
 								"{{uri}}"
 							],
@@ -73,6 +73,12 @@
 								"api",
 								"v1",
 								"files"
+							],
+							"query": [
+								{
+									"key": "path",
+									"value": "'/test'"
+								}
 							]
 						}
 					},
@@ -95,7 +101,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{uri}}/api/v1/files/00000000-615b-85fc-fb32-e935bcd054ae",
+							"raw": "{{uri}}/api/v1/files/00000000-615c-4608-2e5c-a644cc5eb2a9",
 							"host": [
 								"{{uri}}"
 							],
@@ -103,7 +109,7 @@
 								"api",
 								"v1",
 								"files",
-								"00000000-615b-85fc-fb32-e935bcd054ae"
+								"00000000-615c-4608-2e5c-a644cc5eb2a9"
 							]
 						}
 					},
@@ -126,7 +132,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{uri}}/api/v1/files/00000000-615b-85fc-fb32-e935bcd054ae",
+							"raw": "{{uri}}/api/v1/files/00000000-615c-4608-2e5c-a644cc5eb2a9?action=start",
 							"host": [
 								"{{uri}}"
 							],
@@ -134,7 +140,13 @@
 								"api",
 								"v1",
 								"files",
-								"00000000-615b-85fc-fb32-e935bcd054ae"
+								"00000000-615c-4608-2e5c-a644cc5eb2a9"
+							],
+							"query": [
+								{
+									"key": "action",
+									"value": "start"
+								}
 							]
 						}
 					},
